@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -29,18 +31,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Fragment used to retrieve weather data from the API
  */
 public class ForecastFragment extends Fragment {
 
-    ArrayAdapter<String> mForecastAdapter;
     public final static String EXTRA_MESSAGE = "com.example.android.sunshine.app.MESSAGE";
+    ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     @Override
@@ -56,22 +62,11 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Create static data for the ListView
-        String[] forecastArray = {
-                "Today - Overcast - 18/6",
-                "Tomorrow - Overcast - 14/8",
-                "Tuesday - Overcast - 14/8",
-                "Wednesday - Overcast - 17/8",
-                "Thursday - Overcast - 19/6"
-        };
-
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
-
         //Create the adapter
         mForecastAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weekForecast);
+                new ArrayList<String>());
 
         //Get the ListView by id and bind adapter
         ListView lv = (ListView) rootView.findViewById(R.id.listview_fragment);
@@ -100,10 +95,17 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            new FetchWeatherTask().execute("Santiago");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateWeather() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = sharedPref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        new FetchWeatherTask().execute(location);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
