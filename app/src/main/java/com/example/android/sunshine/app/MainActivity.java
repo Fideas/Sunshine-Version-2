@@ -12,14 +12,17 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String FORECASTFRAGMENT_TAG = "forecast_fragment";
+    private String mLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v(LOG_TAG, "onCreate call");
+        mLocation = Utility.getPreferredLocation(this);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -43,8 +46,7 @@ public class MainActivity extends ActionBarActivity {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
-        }
-        else if (id == R.id.action_map){
+        } else if (id == R.id.action_map) {
             //Get location from preferences
             String location = Utility.getPreferredLocation(this);
             //Build URI
@@ -90,6 +92,14 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v(LOG_TAG, "onResume call");
+        String currentLocation = Utility.getPreferredLocation(this);
+        if ( currentLocation != null && !mLocation.equals(currentLocation)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
+                    .findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (ff != null) {
+                ff.onLocationChanged();
+            }
+            mLocation = currentLocation;
+        }
     }
 }

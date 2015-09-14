@@ -59,12 +59,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Let the fragment populate the menu
@@ -133,6 +127,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         String location = Utility.getPreferredLocation(getActivity());
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
         weatherTask.execute(location);
+    }
+
+    public void onLocationChanged() {
+        updateWeather();
+        getLoaderManager().restartLoader(WEATHER_LOADER_ID, null, this);
     }
 
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
