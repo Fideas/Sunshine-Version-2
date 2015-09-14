@@ -32,6 +32,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WEATHER_DESC = 2;
     static final int COL_WEATHER_MAX_TEMP = 3;
     static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_WEATHER_HUMIDITY = 5;
+    static final int COL_WEATHER_PRESSURE = 6;
+    static final int COL_WEATHER_WINDSPEED = 7;
+    static final int COL_WEATHER_DEGREES = 8;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private static final String SHARE_TAG = "#SunshineApp";
@@ -47,7 +51,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+            WeatherContract.WeatherEntry.COLUMN_DEGREES
     };
     private String mForecastStr;
     private ShareActionProvider mShareActionProvider;
@@ -107,18 +115,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (!data.moveToFirst()) {
             return;
         }
-        String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
-        String weatherDescription = data.getString(COL_WEATHER_DESC);
+        //Set Date
+        long date = data.getLong(COL_WEATHER_DATE);
+        TextView dateView = (TextView) getView().findViewById(R.id.list_item_date_textview);
+        dateView.setText(Utility.getFriendlyDayString(getActivity(), date));
+
+        //Set Forecast
+        String forecast = data.getString(COL_WEATHER_DESC);
+        TextView forecastView = (TextView) getView().findViewById(R.id.list_item_forecast_textview);
+        forecastView.setText(forecast);
 
         boolean isMetric = Utility.isMetric(getActivity());
 
-        String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-        String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+        //Set Temperature
+        float high = data.getFloat(COL_WEATHER_MAX_TEMP);
+        TextView highView = (TextView) getView().findViewById(R.id.list_item_high_textview);
+        highView.setText(Utility.formatTemperature(getActivity(), high, isMetric));
+        float low = data.getFloat(COL_WEATHER_MIN_TEMP);
+        TextView lowView = (TextView) getView().findViewById(R.id.list_item_low_textview);
+        lowView.setText(Utility.formatTemperature(getActivity(), low, isMetric));
 
-        mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDescription, high,
-                low);
-        TextView detailTextView = (TextView) getView().findViewById(R.id.detail_text);
-        detailTextView.setText(mForecastStr);
+        //Set Pressure
+        float pressure = data.getFloat(COL_WEATHER_PRESSURE);
+        TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure_textview);
+        pressureView.setText(getString(R.string.format_pressure, pressure));
+
+        //Set humidity
+        float humidity = data.getFloat(COL_WEATHER_HUMIDITY);
+        TextView humidityView = (TextView) getView().findViewById(R.id.list_item_humidity_textview);
+        humidityView.setText(getString(R.string.format_humidity, humidity));
+
+        //Set wind information
+        float windSpeed = data.getFloat(COL_WEATHER_WINDSPEED);
+        float windDirection  = data.getFloat(COL_WEATHER_DEGREES);
+        TextView windView = (TextView) getView().findViewById(R.id.list_item_wind_textview);
+        windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
+
 
         // If onCreateOptionsMenu has already happened, we need to update the share intent now.
         if (mShareActionProvider != null) {
