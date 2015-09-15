@@ -52,10 +52,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
+    private static final String LIST_ITEM_POSITION = "listItemPosition";
     ForecastAdapter mForecastAdapter;
     private ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
-    private static final String LIST_ITEM_POSITION = "listItemPosition";
+    private boolean mUseTodayLayout;
 
     public ForecastFragment() {
     }
@@ -101,6 +102,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
+
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
 
         return rootView;
     }
@@ -171,8 +174,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onSaveInstanceState(Bundle outState) {
         if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(LIST_ITEM_POSITION, mPosition);
-        };
+        }
+        ;
         super.onSaveInstanceState(outState);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
     }
 
     /**

@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback{
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     private static final String DETAILFRAGMENT_TAG = "dftag";
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -37,6 +37,10 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         } else {
             mTwoPane = false;
         }
+
+        ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast));
+        forecastFragment.setUseTodayLayout(!mTwoPane);
     }
 
     @Override
@@ -111,8 +115,8 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             if (ff != null) {
                 ff.onLocationChanged();
             }
-            DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-            if ( null != df ) {
+            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (null != df) {
                 df.onLocationChanged(currentLocation);
             }
             mLocation = currentLocation;
@@ -121,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
     @Override
     public void onItemSelected(Uri contentUri) {
-        if (mTwoPane){
+        if (mTwoPane) {
             Bundle args = new Bundle();
             args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
 
