@@ -70,6 +70,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private ImageView mIconView;
     private TextView mFriendlyDateView;
+    private TextView mDateView;
     private TextView mDescriptionView;
     private TextView mHighTempView;
     private TextView mLowTempView;
@@ -100,7 +101,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) view.findViewById(R.id.list_item_icon);
-        mFriendlyDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
+        mDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
+        mFriendlyDateView = (TextView) view.findViewById(R.id.list_item_day_textview);
         mDescriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
         mHighTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
         mLowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
@@ -149,7 +151,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         //Set Date
         long date = data.getLong(COL_WEATHER_DATE);
-        mFriendlyDateView.setText(Utility.getFriendlyDayString(getActivity(), date));
+        mFriendlyDateView.setText(Utility.getDayName(getActivity(), date));
+        mDateView.setText(Utility.getFormattedMonthDay(getActivity(), date));
 
         //Set Forecast
         String forecast = data.getString(COL_WEATHER_DESC);
