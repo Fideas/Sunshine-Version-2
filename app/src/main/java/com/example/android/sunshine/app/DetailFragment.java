@@ -37,6 +37,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WEATHER_PRESSURE = 6;
     static final int COL_WEATHER_WINDSPEED = 7;
     static final int COL_WEATHER_DEGREES = 8;
+    static final int COL_WEATHER_CONDITION_ID = 9;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private static final String SHARE_TAG = "#SunshineApp";
@@ -56,14 +57,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-            WeatherContract.WeatherEntry.COLUMN_DEGREES
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
     private String mForecastStr;
     private ShareActionProvider mShareActionProvider;
 
     private ImageView mIconView;
     private TextView mFriendlyDateView;
-    private TextView mDateView;
     private TextView mDescriptionView;
     private TextView mHighTempView;
     private TextView mLowTempView;
@@ -89,7 +90,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) view.findViewById(R.id.list_item_icon);
-        mDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
         mFriendlyDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
         mDescriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
         mHighTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
@@ -136,9 +136,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (!data.moveToFirst()) {
             return;
         }
+        //Set weather icon
+        int weatherConditionId = data.getInt(COL_WEATHER_CONDITION_ID);
+        int weatherArt = Utility.getArtResourceForWeatherCondition(weatherConditionId);
+        mIconView.setImageResource(weatherArt);
+
         //Set Date
         long date = data.getLong(COL_WEATHER_DATE);
-        mDateView.setText(Utility.getFriendlyDayString(getActivity(), date));
+        mFriendlyDateView.setText(Utility.getFriendlyDayString(getActivity(), date));
 
         //Set Forecast
         String forecast = data.getString(COL_WEATHER_DESC);
