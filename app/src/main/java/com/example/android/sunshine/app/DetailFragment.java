@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -9,7 +10,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +40,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WEATHER_CONDITION_ID = 9;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    static final String DETAIL_URI = "URI";
+
     private static final String SHARE_TAG = "#SunshineApp";
     private static final int WEATHER_LOADER_ID = 0;
     private static final String[] DETAILED_COLUMNS = {
@@ -61,7 +63,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
     private String mForecastStr;
+    private Uri mUri;
     private ShareActionProvider mShareActionProvider;
+
+    private static final int DETAIL_LOADER = 0;
 
     private ImageView mIconView;
     private TextView mFriendlyDateView;
@@ -88,6 +93,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        if (args != null) {
+            mUri = args.getParcelable(DETAIL_URI);
+        }
+
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) view.findViewById(R.id.list_item_icon);
         mFriendlyDateView = (TextView) view.findViewById(R.id.list_item_date_textview);
@@ -113,23 +123,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         if (mForecastStr != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
-        } else {
-            Log.d(LOG_TAG, "Shared action provider is null?");
         }
     }
 
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null || intent.getData() == null) {
-            return null;
-        } else {
+        if (mUri != null) {
             return new CursorLoader(getActivity(),
-                    intent.getData(),
+                    mUri,
                     DETAILED_COLUMNS,
                     null,
                     null,
                     null);
         }
+        return null;
     }
 
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -170,6 +176,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         float windDirection = data.getFloat(COL_WEATHER_DEGREES);
         mWindView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
 
+        // We still need this for the share intent
+        mForecastStr = String.format("%s - %s - %s/%s", date, forecast, high, low);
+
         // If onCreateOptionsMenu has already happened, we need to update the share intent now.
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
@@ -186,5 +195,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastStr + SHARE_TAG);
         return shareIntent;
+    }
+
+    void onLocationChanged( String newLocation ) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
     }
 }
