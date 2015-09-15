@@ -53,6 +53,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
     ForecastAdapter mForecastAdapter;
+    private ListView mListView;
+    private int mPosition = ListView.INVALID_POSITION;
+    private static final String LIST_ITEM_POSITION = "listItemPosition";
 
     public ForecastFragment() {
     }
@@ -70,19 +73,25 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        //read the position from the bundle
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIST_ITEM_POSITION)) {
+            mPosition = savedInstanceState.getInt(LIST_ITEM_POSITION);
+        }
+
         //Create the adapter
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         //Get the ListView by id and bind adapter
-        ListView lv = (ListView) rootView.findViewById(R.id.listview_fragment);
-        lv.setAdapter(mForecastAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView = (ListView) rootView.findViewById(R.id.listview_fragment);
+        mListView.setAdapter(mForecastAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
-                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                mPosition = position;
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(mPosition);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
                     ((Callback) getActivity())
@@ -149,10 +158,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            mListView.smoothScrollToPosition(mPosition);
+        }
     }
 
     public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition != ListView.INVALID_POSITION) {
+            outState.putInt(LIST_ITEM_POSITION, mPosition);
+        };
+        super.onSaveInstanceState(outState);
     }
 
     /**
