@@ -64,27 +64,14 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.action_map) {
-            //Get location from preferences
-            String location = Utility.getPreferredLocation(this);
-            //Build URI
-            Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
-                    .appendQueryParameter("q", location)
-                    .build();
-            //Create Intent and append the data
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(geoLocation);
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     protected void onStop() {
