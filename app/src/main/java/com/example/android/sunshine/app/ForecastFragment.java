@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -59,6 +60,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
     ForecastAdapter mForecastAdapter;
     private ListView mListView;
+    private TextView mEmptyView;
     private int mPosition = ListView.INVALID_POSITION;
     private boolean mUseTodayLayout;
 
@@ -107,7 +109,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
         //Add the empty view to the ListView
-        mListView.setEmptyView(rootView.findViewById(R.id.empty_view));
+        mEmptyView = (TextView)rootView.findViewById(R.id.empty_view);
+        mListView.setEmptyView(mEmptyView);
 
         mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
 
@@ -167,6 +170,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        updateEmptyView();
         mForecastAdapter.swapCursor(data);
         if (mPosition != ListView.INVALID_POSITION) {
             mListView.smoothScrollToPosition(mPosition);
@@ -184,6 +188,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
         ;
         super.onSaveInstanceState(outState);
+    }
+
+    private void updateEmptyView(){
+        if (mForecastAdapter == null || mForecastAdapter.getCount() == 0){
+            if (!Utility.isOnline(getActivity())) {
+                mEmptyView.append(getString(R.string.no_connection));
+            }
+        }
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {
