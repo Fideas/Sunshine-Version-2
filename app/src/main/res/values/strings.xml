@@ -23,10 +23,15 @@
     <string name="pref_notification_title">Notifications</string>
     <string name="pref_notification_key" translatable="false">notification</string>
     <string name="pref_notification_default" translatable="false">true</string>
+    <!-- Location Status-->
+    <string name="pref_location_status_key" translatable="false">loc-status</string>
 
     <!-- Strings to show when there is no data available -->
     <string name="empty_forecast_list">No weather information available.</string>
     <string name="no_connection">The network is not available to fetch weather data</string>
+    <string name="server_down">The server is not returning data</string>
+    <string name="server_error">The server is not returning valid data.
+        Please check for an updated version of Sunshine.</string>
 
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
