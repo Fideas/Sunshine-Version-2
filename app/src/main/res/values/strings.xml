@@ -23,6 +23,9 @@
     <string name="pref_notification_title">Notifications</string>
     <string name="pref_notification_key" translatable="false">notification</string>
     <string name="pref_notification_default" translatable="false">true</string>
+    <!-- String to show when there is no data available -->
+    <string name="empty_string">No Weather Information Available</string>
+
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
 
@@ -65,6 +68,5 @@
     Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</xliff:g> Low: <xliff:g id="low">%3$s</xliff:g>
     </string>
     <!-- Strings related to Notification preference -->
-    <string name="pref_last_notification">last_notification
-    </string>
+    <string name="pref_last_notification">last_notification</string>
 </resources>

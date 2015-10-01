@@ -106,6 +106,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
+        //Add the empty view to the ListView
+        mListView.setEmptyView(rootView.findViewById(R.id.empty_view));
 
         mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
 
