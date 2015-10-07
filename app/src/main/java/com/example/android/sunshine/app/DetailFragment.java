@@ -144,40 +144,50 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (!data.moveToFirst()) {
             return;
         }
+
+        //Set Forecast
+        String forecast = data.getString(COL_WEATHER_DESC);
+        mDescriptionView.setText(forecast);
+        mDescriptionView.setContentDescription(getString(R.string.a11y_forecast, forecast));
+
         //Set weather icon
         int weatherConditionId = data.getInt(COL_WEATHER_CONDITION_ID);
         int weatherArt = Utility.getArtResourceForWeatherCondition(weatherConditionId);
         mIconView.setImageResource(weatherArt);
+        mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, forecast));
 
         //Set Date
         long date = data.getLong(COL_WEATHER_DATE);
         mFriendlyDateView.setText(Utility.getDayName(getActivity(), date));
         mDateView.setText(Utility.getFormattedMonthDay(getActivity(), date));
 
-        //Set Forecast
-        String forecast = data.getString(COL_WEATHER_DESC);
-        mDescriptionView.setText(forecast);
-
         boolean isMetric = Utility.isMetric(getActivity());
 
         //Set Temperature
         float high = data.getFloat(COL_WEATHER_MAX_TEMP);
-        mHighTempView.setText(Utility.formatTemperature(getActivity(), high, isMetric));
+        String highTemperature = Utility.formatTemperature(getActivity(), high, isMetric);
+        mHighTempView.setText(highTemperature);
+        mHighTempView.setContentDescription(getString(R.string.a11y_high_temp, highTemperature));
         float low = data.getFloat(COL_WEATHER_MIN_TEMP);
-        mLowTempView.setText(Utility.formatTemperature(getActivity(), low, isMetric));
+        String lowTemperature = Utility.formatTemperature(getActivity(), low, isMetric);
+        mLowTempView.setText(lowTemperature);
+        mLowTempView.setContentDescription(getString(R.string.a11y_low_temp, lowTemperature));
 
         //Set Pressure
         float pressure = data.getFloat(COL_WEATHER_PRESSURE);
         mPressureView.setText(getString(R.string.format_pressure, pressure));
+        mPressureView.setContentDescription(mPressureView.getText());
 
         //Set humidity
         float humidity = data.getFloat(COL_WEATHER_HUMIDITY);
         mHumidityView.setText(getString(R.string.format_humidity, humidity));
+        mHumidityView.setContentDescription(mHumidityView.getText());
 
         //Set wind information
         float windSpeed = data.getFloat(COL_WEATHER_WINDSPEED);
         float windDirection = data.getFloat(COL_WEATHER_DEGREES);
         mWindView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
+        mWindView.setContentDescription(mWindView.getText());
 
         // We still need this for the share intent
         mForecastStr = String.format("%s - %s - %s/%s", date, forecast, high, low);
