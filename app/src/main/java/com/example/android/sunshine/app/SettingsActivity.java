@@ -9,6 +9,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -25,6 +26,8 @@ public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private final String LOG_TAG = SettingsActivity.class.getSimpleName();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,11 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+
+        // Get the minLength attribute from the custom preference
+        int minLength = ((LocationEditTextPreference)
+                findPreference(getString(R.string.pref_location_key))).getMinLength();
+        Log.d(LOG_TAG, "Minimum Length: " + Integer.toString(minLength));
     }
 
     /**
