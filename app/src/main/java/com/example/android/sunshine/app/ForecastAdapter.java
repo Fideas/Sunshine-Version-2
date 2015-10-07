@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -29,7 +31,7 @@ public class ForecastAdapter extends CursorAdapter {
         return VIEW_TYPE_COUNT;
     }
 
-    public void setUseTodayLayout (boolean useTodayLayout) {
+    public void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;
     }
 
@@ -69,14 +71,19 @@ public class ForecastAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         // Read weather icon ID from cursor
+        int viewType = getItemViewType(cursor.getPosition());
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
-        int weatherIcon = -1;
-        if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY) {
-            weatherIcon = Utility.getArtResourceForWeatherCondition(weatherId);
-        } else if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_FUTURE_DAY){
-            weatherIcon = Utility.getIconResourceForWeatherCondition(weatherId);
+        int fallbackIconId;
+        if (viewType == VIEW_TYPE_TODAY) {
+            fallbackIconId = Utility.getArtResourceForWeatherCondition(weatherId);
+        } else {
+            fallbackIconId = Utility.getIconResourceForWeatherCondition(weatherId);
         }
-        viewHolder.iconView.setImageResource(weatherIcon);
+        Glide.with(mContext)
+                .load(Utility.getArtUrlForWeatherCondition(mContext, weatherId))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(viewHolder.iconView);
 
         // Read date from cursor
         long date = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);

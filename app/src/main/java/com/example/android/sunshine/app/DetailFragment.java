@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 /**
@@ -152,8 +153,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         //Set weather icon
         int weatherConditionId = data.getInt(COL_WEATHER_CONDITION_ID);
-        int weatherArt = Utility.getArtResourceForWeatherCondition(weatherConditionId);
-        mIconView.setImageResource(weatherArt);
+        Glide.with(this)
+                .load(Utility.getArtUrlForWeatherCondition(getActivity(), weatherConditionId))
+                .error(Utility.getArtResourceForWeatherCondition(weatherConditionId))
+                .crossFade()
+                .into(mIconView);
         mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, forecast));
 
         //Set Date
