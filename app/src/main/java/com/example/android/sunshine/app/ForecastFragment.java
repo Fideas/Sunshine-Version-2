@@ -213,6 +213,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private void updateEmptyView() {
         if (mForecastAdapter == null || mForecastAdapter.getCount() == 0) {
             int locationStatus = Utility.getLocationStatus(getActivity());
+            mEmptyView.setText(getString(R.string.empty_forecast_list));
             switch (locationStatus) {
                 case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN: {
                     mEmptyView.append(getString(R.string.server_down));
