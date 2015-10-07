@@ -263,6 +263,7 @@ public class Utility {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
     @SuppressWarnings("ResourceType")
     @SunshineSyncAdapter.LocationStatus
     public static int getLocationStatus(Context context){
@@ -270,5 +271,14 @@ public class Utility {
                 .getDefaultSharedPreferences(context);
         return sharedPreferences.getInt(context.getString(R.string.pref_location_status_key),
                 SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+    }
+
+    public static void resetLocationStatus(Context context){
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(context.getString(R.string.pref_location_status_key),
+                SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        editor.apply();
     }
 }

@@ -30,8 +30,12 @@
     <string name="empty_forecast_list">No weather information available.</string>
     <string name="no_connection">The network is not available to fetch weather data</string>
     <string name="server_down">The server is not returning data</string>
-    <string name="server_error">The server is not returning valid data.
-        Please check for an updated version of Sunshine.</string>
+    <string name="server_error">
+        The server is not returning valid data. Please check for an updated version of Sunshine.
+    </string>
+    <string name="invalid_location">
+        The location in settings is not recognized by the weather server.
+    </string>
 
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
