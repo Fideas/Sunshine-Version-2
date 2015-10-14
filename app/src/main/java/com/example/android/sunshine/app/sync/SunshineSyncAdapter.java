@@ -179,6 +179,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         String locationQuery = Utility.getPreferredLocation(getContext());
 
 
+        //Insert your API Key in the line below
+        //For more information on how to get an API key please visit http://openweathermap.org/appid
+        final String API_KEY = "YOUR API KEY";
+
         Log.d(LOG_TAG, "OnPerformSyncCalled");
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -202,12 +206,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
+            final String API_KEY_PARAM = "APPID";
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, locationQuery)
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                    .appendQueryParameter(API_KEY_PARAM,API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());
