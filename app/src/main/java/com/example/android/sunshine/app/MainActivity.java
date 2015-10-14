@@ -81,11 +81,11 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         forecastFragment.setUseTodayLayout(!mTwoPane);
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
-        if (!checkPlayServices()) {
+        if (checkPlayServices()) {
             mCloudMessaging = GoogleCloudMessaging.getInstance(this);
             String regId = getRegistrationId(this);
 
-            if (PROJECT_NUMBER.equals("227391488870")) {
+            if (!PROJECT_NUMBER.equals("227391488870")) {
                 new AlertDialog.Builder(this)
                         .setTitle("Needs Project Number")
                         .setMessage("GCM will not function in Sunshine until you set the Project Number to the one from the Google Developers Console.")
