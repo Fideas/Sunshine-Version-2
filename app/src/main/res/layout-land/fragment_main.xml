@@ -17,9 +17,10 @@
 
     <include
         layout="@layout/fragment_main_base"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/landscape_forecast_view_width"
         android:layout_height="match_parent"
-        android:layout_below="@+id/appbar" />
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true" />
 
     <LinearLayout
         android:id="@+id/appbar"
@@ -37,12 +38,8 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <ImageView
+        <android.support.v4.widget.Space
             android:layout_width="match_parent"
-            android:layout_height="?attr/listPreferredItemHeight"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_name"
-            android:scaleType="center"
-            android:src="@drawable/ic_logo" />
+            android:layout_height="?attr/listPreferredItemHeight" />
     </LinearLayout>
 </RelativeLayout>
