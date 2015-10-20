@@ -76,6 +76,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int INDEX_SHORT_DESC = 3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
+
+    public static final String ACTION_DATA_UPDATED =
+            "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
+
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
@@ -434,6 +438,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                         new String[]{Long.toString(dayTime.setJulianDay(julianStartDay - 1))});
 
                 notifyWeather();
+                updateWidgets();
             }
 
             Log.d(LOG_TAG, "SunshineSyncAdapter Complete. " + inserted + " Inserted");
@@ -557,7 +562,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
                     //build your notification here.
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                            .setColor(R.color.primary_light)
+                            .setColor(resources.getColor(R.color.primary_light))
                             .setSmallIcon(iconId)
                             .setLargeIcon(largeIcon)
                             .setContentTitle(title)
@@ -584,6 +589,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
+    }
+
+    public void updateWidgets() {
+        Context context = getContext();
+        Intent dataUpdateIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdateIntent);
     }
 
     public void setLocationStatus(Context context, @LocationStatus int mode) {
