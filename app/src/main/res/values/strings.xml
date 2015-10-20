@@ -211,4 +211,7 @@
 
     <!-- For Shared Element Transition -->
     <string name="detail_icon_transition_name" translatable="false">TN_DetailIcon</string>
+
+    <!-- Widget Title -->
+    <string name="title_widget_today">Sunshine Today</string>
 </resources>
